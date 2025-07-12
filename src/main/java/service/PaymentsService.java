@@ -1,5 +1,6 @@
 package service;
 
+import service.domain.DomainPayment;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import repository.ClientRepository;
 import repository.ContractRepository;
 import repository.PaymentRepository;
+import repository.entities.Payment;
 
 import java.util.List;
 
@@ -28,12 +30,16 @@ public class PaymentsService {
         this.contractRepository = contractRepository;
     }
 
-    public List<String> getPaymentsByContractNumber(String contractNumber) {
-        return List.of();
+    public List<DomainPayment> getPaymentsByContractNumber(String contractNumber) {
+        //TODO: Validate contract number exists before attempting to fetch
+        List<Payment> payments = paymentRepository.findAllByContract_ContractNumber(contractNumber);
+        return payments.stream().map(DomainPayment::toDomain).toList();
     }
 
-    public List<String> getPaymentsByClientId(String customerNumber) {
-        return List.of();
+    public List<DomainPayment> getPaymentsByClientId(String clientId) {
+        //TODO: Validate client id exists before attempting to fetch
+        List<Payment> payments = paymentRepository.findAllByClient_Id(clientId);
+        return payments.stream().map(DomainPayment::toDomain).toList();
     }
 
     @Transactional

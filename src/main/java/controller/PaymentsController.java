@@ -1,5 +1,7 @@
 package controller;
 
+import controller.response.ListPaymentResponse;
+import controller.response.PaymentResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +26,20 @@ public class PaymentsController {
     public PaymentsController(PaymentsService paymentsService) {
         this.paymentsService = paymentsService;
     }
-
+    // TODO: GlobalExceptionHandler
+    // TODO: Client verification
     @GetMapping("/contract/{contractNumber}")
-    public ResponseEntity<List<String>> getPaymentsByContractNumber(@PathVariable String contractNumber) {
+    public ResponseEntity<ListPaymentResponse> getPaymentsByContractNumber(@PathVariable String contractNumber) {
         var payments = paymentsService.getPaymentsByContractNumber(contractNumber);
-        return ResponseEntity.ok().body(payments);
+        var responsePayments = payments.stream().map(PaymentResponse::fromDomain).toList();
+        return ResponseEntity.ok().body(new ListPaymentResponse(responsePayments));
     }
 
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<String>> getPaymentsByClientId(@PathVariable String clientId) {
+    public ResponseEntity<ListPaymentResponse> getPaymentsByClientId(@PathVariable String clientId) {
         var payments = paymentsService.getPaymentsByClientId(clientId);
-        return ResponseEntity.ok().body(payments);
+        var responsePayments = payments.stream().map(PaymentResponse::fromDomain).toList();
+        return ResponseEntity.ok().body(new ListPaymentResponse(responsePayments));
     }
 
     @PostMapping
