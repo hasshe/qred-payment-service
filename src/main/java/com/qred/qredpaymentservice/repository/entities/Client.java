@@ -1,4 +1,4 @@
-package repository.entities;
+package com.qred.qredpaymentservice.repository.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

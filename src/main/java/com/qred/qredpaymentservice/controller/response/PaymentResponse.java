@@ -1,6 +1,6 @@
-package controller.response;
+package com.qred.qredpaymentservice.controller.response;
 
-import service.domain.DomainPayment;
+import com.qred.qredpaymentservice.service.domain.DomainPayment;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

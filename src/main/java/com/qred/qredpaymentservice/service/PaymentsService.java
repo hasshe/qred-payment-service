@@ -1,16 +1,16 @@
-package service;
+package com.qred.qredpaymentservice.service;
 
-import service.domain.DomainPayment;
+import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import repository.ClientRepository;
-import repository.ContractRepository;
-import repository.PaymentRepository;
-import repository.entities.Payment;
+import com.qred.qredpaymentservice.repository.ClientRepository;
+import com.qred.qredpaymentservice.repository.ContractRepository;
+import com.qred.qredpaymentservice.repository.PaymentRepository;
+import com.qred.qredpaymentservice.repository.entities.Payment;
 
 import java.util.List;
 

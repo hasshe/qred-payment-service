@@ -1,4 +1,4 @@
-package repository.entities;
+package com.qred.qredpaymentservice.repository.entities;
 
 import jakarta.persistence.*;
 
@@ -23,12 +23,6 @@ public class Payment {
     @Column(nullable = false, length = 20)
     private String type;
 
-    @Column(name = "contract_number", nullable = false, length = 50)
-    private String contractNumber;
-
-    @Column(name = "client_id", nullable = false, length = 50)
-    private String clientId;
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
@@ -43,12 +37,12 @@ public class Payment {
     public Payment() {
     }
 
-    public Payment(LocalDate paymentDate, BigDecimal amount, String type, String contractNumber, String clientId) {
+    public Payment(LocalDate paymentDate, BigDecimal amount, String type, Contract contract, Client client) {
         this.paymentDate = paymentDate;
         this.amount = amount;
         this.type = type;
-        this.contractNumber = contractNumber;
-        this.clientId = clientId;
+        this.client = client;
+        this.contract = contract;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -78,22 +72,6 @@ public class Payment {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getContractNumber() {
-        return contractNumber;
-    }
-
-    public void setContractNumber(String contractNumber) {
-        this.contractNumber = contractNumber;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
     }
 
     public LocalDateTime getCreatedAt() {

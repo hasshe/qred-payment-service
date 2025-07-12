@@ -1,6 +1,6 @@
-package service.domain;
+package com.qred.qredpaymentservice.service.domain;
 
-import repository.entities.Payment;
+import com.qred.qredpaymentservice.repository.entities.Payment;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -11,8 +11,8 @@ public record DomainPayment(LocalDate paymentDate, BigDecimal amount, PaymentTyp
                 payment.getPaymentDate(),
                 payment.getAmount(),
                 PaymentType.fromString(payment.getType()),
-                payment.getContractNumber(),
-                payment.getClientId()
+                payment.getContract().getContractNumber(),
+                payment.getClient().getId()
         );
     }
 }

@@ -1,6 +1,6 @@
-package service.domain;
+package com.qred.qredpaymentservice.service.domain;
 
-import utils.exceptions.PaymentTypeException;
+import com.qred.qredpaymentservice.exceptions.PaymentTypeException;
 
 public enum PaymentType {
     INCOMING,

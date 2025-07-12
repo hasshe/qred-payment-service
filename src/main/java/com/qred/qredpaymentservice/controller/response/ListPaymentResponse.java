@@ -1,4 +1,4 @@
-package controller.response;
+package com.qred.qredpaymentservice.controller.response;
 
 import jakarta.validation.Valid;
 

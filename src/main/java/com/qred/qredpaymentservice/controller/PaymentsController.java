@@ -1,7 +1,10 @@
-package controller;
+package com.qred.qredpaymentservice.controller;
 
-import controller.response.ListPaymentResponse;
-import controller.response.PaymentResponse;
+import com.qred.qredpaymentservice.controller.response.ListPaymentResponse;
+import com.qred.qredpaymentservice.controller.response.PaymentResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
-import service.PaymentsService;
+import com.qred.qredpaymentservice.service.PaymentsService;
 
 import java.util.List;
 
@@ -28,6 +31,11 @@ public class PaymentsController {
     }
     // TODO: GlobalExceptionHandler
     // TODO: Client verification
+    @Operation(summary = "Get payments by contract number")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved payments"),
+            @ApiResponse(responseCode = "404", description = "Payments not found")
+    })
     @GetMapping("/contract/{contractNumber}")
     public ResponseEntity<ListPaymentResponse> getPaymentsByContractNumber(@PathVariable String contractNumber) {
         var payments = paymentsService.getPaymentsByContractNumber(contractNumber);

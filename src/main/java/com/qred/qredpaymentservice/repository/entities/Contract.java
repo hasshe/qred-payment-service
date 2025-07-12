@@ -1,4 +1,4 @@
-package repository.entities;
+package com.qred.qredpaymentservice.repository.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -13,10 +13,6 @@ public class Contract {
     @Column
     private String contractNumber;
 
-    @NotBlank
-    @Column(nullable = false)
-    private String clientId;
-
     @Column(length = 20)
     private String status;
 
@@ -29,9 +25,9 @@ public class Contract {
 
     public Contract() {}
 
-    public Contract(String contractNumber, String clientId, String status) {
+    public Contract(String contractNumber, Client client, String status) {
         this.contractNumber = contractNumber;
-        this.clientId = clientId;
+        this.client = client;
         this.status = status;
     }
 
@@ -41,14 +37,6 @@ public class Contract {
 
     public void setContractNumber(String contractNumber) {
         this.contractNumber = contractNumber;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
     }
 
     public String getStatus() {
