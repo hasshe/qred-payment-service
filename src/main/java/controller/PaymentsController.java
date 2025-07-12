@@ -2,10 +2,15 @@ package controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
+import service.PaymentsService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -13,23 +18,36 @@ public class PaymentsController {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentsController.class);
 
+    private final PaymentsService paymentsService;
+
+    @Autowired
+    public PaymentsController(PaymentsService paymentsService) {
+        this.paymentsService = paymentsService;
+    }
+
     @GetMapping("/contract/{contractNumber}")
-    public ResponseEntity<String> getPaymentsByContractNumber(@PathVariable String contractNumber) {
-        return ResponseEntity.ok().body(contractNumber);
+    public ResponseEntity<List<String>> getPaymentsByContractNumber(@PathVariable String contractNumber) {
+        var payments = paymentsService.getPaymentsByContractNumber(contractNumber);
+        return ResponseEntity.ok().body(payments);
     }
 
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<String> getPaymentsByClientId(@PathVariable String clientId) {
-        return ResponseEntity.ok().body(clientId);
+    public ResponseEntity<List<String>> getPaymentsByClientId(@PathVariable String clientId) {
+        var payments = paymentsService.getPaymentsByClientId(clientId);
+        return ResponseEntity.ok().body(payments);
     }
 
     @PostMapping
     public ResponseEntity<String> createPayment(@Valid @RequestBody String value) {
-        return ResponseEntity.ok().body(value);
+        logger.info("Create Payment Request");
+        var createdPayment = paymentsService.createPayment(value);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPayment);
     }
 
     @PostMapping("/file")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
-        return ResponseEntity.ok().body(file.getOriginalFilename());
+    public ResponseEntity<List<String>> uploadFile(@RequestParam("file") MultipartFile file) {
+        logger.info("Upload Payment Request");
+        var createdPayments = paymentsService.uploadFile(file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdPayments);
     }
 }
