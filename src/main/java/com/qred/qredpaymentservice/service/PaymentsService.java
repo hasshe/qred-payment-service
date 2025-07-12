@@ -43,8 +43,16 @@ public class PaymentsService {
     }
 
     @Transactional
-    public String createPayment(String value) {
-        return null;
+    public DomainPayment createPayment(DomainPayment domainPayment) {
+        // TODO: validate before fetching
+        var newPayment = new Payment();
+        var existingClient = clientRepository.findById(domainPayment.clientId());
+        var existingContract = contractRepository.findByContractNumber(domainPayment.contractNumber());
+        newPayment.setAmount(domainPayment.amount());
+        newPayment.setClient(existingClient.get());
+        newPayment.setContract(existingContract.get());
+        newPayment.setType(domainPayment.paymentType().name());
+        return DomainPayment.toDomain(paymentRepository.save(newPayment));
     }
 
     @Transactional

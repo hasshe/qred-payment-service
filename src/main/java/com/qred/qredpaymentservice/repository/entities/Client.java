@@ -20,14 +20,20 @@ public class Client {
     @Email(message = "Invalid Email Format.")
     private String email;
 
+    @Column(nullable = false)
+    @NotBlank
+    private String address;
+
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Payment> payments;
 
     public Client() {}
 
-    public Client(String name, String email) {
+    public Client(String name, String email, String address,  List<Payment> payments) {
         this.name = name;
         this.email = email;
+        this.address = address;
+        this.payments = payments;
     }
 
     public String getId() {
@@ -60,5 +66,13 @@ public class Client {
 
     public void setPayments(List<Payment> payments) {
         this.payments = payments;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

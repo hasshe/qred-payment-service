@@ -1,7 +1,8 @@
 package com.qred.qredpaymentservice.controller;
 
-import com.qred.qredpaymentservice.controller.response.ListPaymentResponse;
-import com.qred.qredpaymentservice.controller.response.PaymentResponse;
+import com.qred.qredpaymentservice.controller.records.response.ListPaymentResponse;
+import com.qred.qredpaymentservice.controller.records.ApiPayment;
+import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -39,22 +40,22 @@ public class PaymentsController {
     @GetMapping("/contract/{contractNumber}")
     public ResponseEntity<ListPaymentResponse> getPaymentsByContractNumber(@PathVariable String contractNumber) {
         var payments = paymentsService.getPaymentsByContractNumber(contractNumber);
-        var responsePayments = payments.stream().map(PaymentResponse::fromDomain).toList();
+        var responsePayments = payments.stream().map(ApiPayment::fromDomain).toList();
         return ResponseEntity.ok().body(new ListPaymentResponse(responsePayments));
     }
 
     @GetMapping("/client/{clientId}")
     public ResponseEntity<ListPaymentResponse> getPaymentsByClientId(@PathVariable String clientId) {
         var payments = paymentsService.getPaymentsByClientId(clientId);
-        var responsePayments = payments.stream().map(PaymentResponse::fromDomain).toList();
+        var responsePayments = payments.stream().map(ApiPayment::fromDomain).toList();
         return ResponseEntity.ok().body(new ListPaymentResponse(responsePayments));
     }
 
     @PostMapping
-    public ResponseEntity<String> createPayment(@Valid @RequestBody String value) {
+    public ResponseEntity<ApiPayment> createPayment(@Valid @RequestBody ApiPayment requestPayment) {
         logger.info("Create Payment Request");
-        var createdPayment = paymentsService.createPayment(value);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPayment);
+        var createdPayment = paymentsService.createPayment(DomainPayment.toDomain(requestPayment));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiPayment.fromDomain(createdPayment));
     }
 
     @PostMapping("/file")

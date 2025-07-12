@@ -1,5 +1,6 @@
 package com.qred.qredpaymentservice.service.domain;
 
+import com.qred.qredpaymentservice.controller.records.ApiPayment;
 import com.qred.qredpaymentservice.repository.entities.Payment;
 
 import java.math.BigDecimal;
@@ -13,6 +14,16 @@ public record DomainPayment(LocalDate paymentDate, BigDecimal amount, PaymentTyp
                 PaymentType.fromString(payment.getType()),
                 payment.getContract().getContractNumber(),
                 payment.getClient().getId()
+        );
+    }
+
+    public static DomainPayment toDomain(ApiPayment payment) {
+        return new DomainPayment(
+                payment.paymentDate(),
+                payment.amount(),
+                PaymentType.fromString(payment.paymentType()),
+                payment.contractNumber(),
+                payment.clientId()
         );
     }
 }

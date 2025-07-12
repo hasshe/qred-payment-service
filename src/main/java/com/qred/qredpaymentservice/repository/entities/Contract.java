@@ -17,7 +17,7 @@ public class Contract {
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
     @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

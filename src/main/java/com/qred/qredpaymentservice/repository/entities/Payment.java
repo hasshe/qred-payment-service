@@ -27,11 +27,11 @@ public class Payment {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "client_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "client_id", referencedColumnName = "id")
     private Client client;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contract_number", referencedColumnName = "contractNumber", insertable = false, updatable = false)
+    @JoinColumn(name = "contract_number", referencedColumnName = "contractNumber")
     private Contract contract;
 
     public Payment() {
