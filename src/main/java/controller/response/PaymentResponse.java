@@ -1,8 +1,6 @@
 package controller.response;
 
-import repository.entities.Payment;
 import service.domain.DomainPayment;
-import service.domain.PaymentType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

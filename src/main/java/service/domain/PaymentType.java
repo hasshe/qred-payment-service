@@ -1,6 +1,6 @@
 package service.domain;
 
-import utils.PaymentTypeException;
+import utils.exceptions.PaymentTypeException;
 
 public enum PaymentType {
     INCOMING,
