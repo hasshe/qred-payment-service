@@ -1,4 +1,4 @@
-package com.qred.qredpaymentservice.utils;
+package com.qred.qredpaymentservice.utils.csv_processor;
 
 import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import com.qred.qredpaymentservice.service.domain.PaymentType;

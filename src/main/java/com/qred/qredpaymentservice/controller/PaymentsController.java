@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class PaymentsController {
 
     @PostMapping(path = "/file/{clientId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ListPaymentResponse> uploadFile(@RequestPart("file") MultipartFile file, @PathVariable String clientId) throws IOException {
+    public ResponseEntity<ListPaymentResponse> uploadFile(@RequestPart("file") MultipartFile file, @PathVariable String clientId) throws IOException, JAXBException {
         logger.info("Upload Payment Request");
         var createdPayments = paymentsService.uploadFile(file, clientId).stream().map(ApiPayment::fromDomain).toList();
         return ResponseEntity.status(HttpStatus.CREATED).body(new ListPaymentResponse(createdPayments));

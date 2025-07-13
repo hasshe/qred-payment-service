@@ -2,6 +2,7 @@ package com.qred.qredpaymentservice.service;
 
 import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import jakarta.transaction.Transactional;
+import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +60,7 @@ public class PaymentsService {
     }
 
     @Transactional
-    public List<DomainPayment> uploadFile(MultipartFile file, String clientId) throws IOException {
+    public List<DomainPayment> uploadFile(MultipartFile file, String clientId) throws IOException, JAXBException {
         //TODO: validate clientId
         return paymentsFileService.processPaymentsFile(file, clientId);
     }

@@ -1,7 +1,9 @@
 package com.qred.qredpaymentservice.service;
 
 import com.qred.qredpaymentservice.service.domain.DomainPayment;
-import com.qred.qredpaymentservice.utils.CsvFileParser;
+import com.qred.qredpaymentservice.utils.csv_processor.CsvFileParser;
+import com.qred.qredpaymentservice.utils.xml_processor.XmlFileParser;
+import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,7 @@ public class PaymentsFileService {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentsFileService.class.getName());
 
-    public List<DomainPayment> processPaymentsFile(MultipartFile file, String clientId) throws IOException {
+    public List<DomainPayment> processPaymentsFile(MultipartFile file, String clientId) throws IOException, JAXBException {
         logger.info("Process Payment Request");
         String fileName = file.getOriginalFilename();
 
@@ -27,7 +29,7 @@ public class PaymentsFileService {
 
         return switch (fileExtension.toLowerCase()) {
             case ".csv" -> CsvFileParser.processCsvFile(file, clientId);
-            case ".xml" -> null;
+            case ".xml" -> XmlFileParser.processXmlFile(file, clientId);
             default -> throw new IllegalArgumentException("File extension is invalid");
         };
     }
