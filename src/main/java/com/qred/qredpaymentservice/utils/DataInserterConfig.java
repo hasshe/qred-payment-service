@@ -18,30 +18,34 @@ public class DataInserterConfig {
     @Bean
     public CommandLineRunner populateData(ClientRepository clientRepository, ContractRepository contractRepository) {
         return args -> {
-            var client1 = getClient("199711281234", "hassan.sheikha@email.com", "Hassan", "Some Address 12");
-            var savedClient = clientRepository.save(client1);
-            var newContract1 = new Contract();
-            newContract1.setContractNumber("12345");
-            newContract1.setStatus("ACTIVE");
-            newContract1.setPayments(List.of());
-            newContract1.setClient(savedClient);
+            var client1 = getClient("1", "hassan.sheikha@email.com", "Hassan", "Some Address 12");
+            var client2 = getClient("2", "test.testsson@email.com", "Test", "Some Address 121");
+            var savedClient1 = clientRepository.save(client1);
+            var savedClient2 = clientRepository.save(client2);
+            var newContract1 = getContract("12345", "ACTIVE", savedClient1);
+            var newContract2 = getContract("54321", "ACTIVE", savedClient1);
+            var newContract3 = getContract("67890", "INACTIVE", savedClient2);
             contractRepository.save(newContract1);
-
-            var newContract2 = new Contract();
-            newContract2.setContractNumber("54321");
-            newContract2.setStatus("ACTIVE");
-            newContract2.setPayments(List.of());
-            newContract2.setClient(savedClient);
             contractRepository.save(newContract2);
+            contractRepository.save(newContract3);
         };
     }
 
     private Client getClient(String id, String email, String name, String address) {
-        var newClient1 = new Client();
-        newClient1.setId(id);
-        newClient1.setEmail(email);
-        newClient1.setName(name);
-        newClient1.setAddress(address);
-        return newClient1;
+        var client = new Client();
+        client.setId(id);
+        client.setEmail(email);
+        client.setName(name);
+        client.setAddress(address);
+        return client;
+    }
+
+    private Contract getContract(String contractNumber, String status, Client client) {
+        var contract = new Contract();
+        contract.setContractNumber(contractNumber);
+        contract.setStatus(status);
+        contract.setPayments(List.of());
+        contract.setClient(client);
+        return contract;
     }
 }
