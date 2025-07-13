@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payments")
@@ -67,10 +66,10 @@ public class PaymentsController {
 
     @Operation(summary = "Create single payment for a contract")
     @PostMapping
-    public ResponseEntity<ApiPayment> createPayment(@Valid @RequestBody ApiPayment requestPayment) {
+    public ResponseEntity<ListPaymentResponse> createPayment(@Valid @RequestBody ApiPayment requestPayment) {
         logger.info("Create Payment Request");
         var createdPayment = paymentsService.createPayment(DomainPayment.toDomain(requestPayment));
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiPayment.fromDomain(createdPayment));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ListPaymentResponse(List.of(ApiPayment.fromDomain(createdPayment))));
     }
 
     @Operation(summary = "Create multiple payments for contracts via CSV or XML files.")
