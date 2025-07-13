@@ -8,16 +8,12 @@ import com.qred.qredpaymentservice.repository.entities.Contract;
 import com.qred.qredpaymentservice.repository.entities.Payment;
 import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import jakarta.transaction.Transactional;
-import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.naming.AuthenticationException;
-import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -61,7 +57,7 @@ public class PaymentsService {
             var domainPayments = paymentsFileService.processPaymentsFile(file, clientId);
             return domainPayments.stream().map(this::SaveAndReturnPayment).toList();
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Something went wrong while processing file. Message: %s", e.getMessage()));
+            throw new IllegalArgumentException(String.format("Something went wrong while processing file. Message: %s", e.getMessage()));
         }
     }
 
@@ -81,7 +77,7 @@ public class PaymentsService {
     private Client verifyClient(String clientId) {
         var client = clientRepository.findById(clientId);
         if (client.isEmpty()) {
-            throw new RuntimeException("Client not found");
+            throw new IllegalArgumentException("Client not found");
         }
         return client.get();
     }
@@ -89,7 +85,7 @@ public class PaymentsService {
     private Contract verifyContract(String contractNumber) {
         var contract = contractRepository.findByContractNumber(contractNumber);
         if (contract.isEmpty()) {
-            throw new RuntimeException("Contract not found");
+            throw new IllegalArgumentException("Contract not found");
         }
         return contract.get();
     }

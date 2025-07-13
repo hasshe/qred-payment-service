@@ -169,7 +169,7 @@ class PaymentsServiceTest {
         when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
         when(clientRepository.findById("0")).thenReturn(Optional.empty());
         when(paymentsFileService.processPaymentsFile(file, "0")).thenReturn(List.of(testDomainPayment));
-        assertThrows(RuntimeException.class, () ->  paymentsService.uploadFile(file, "0"));
+        assertThrows(IllegalArgumentException.class, () ->  paymentsService.uploadFile(file, "0"));
     }
 
     @Test
@@ -194,7 +194,7 @@ class PaymentsServiceTest {
         when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
         when(clientRepository.findById("0")).thenReturn(Optional.empty());
         when(paymentsFileService.processPaymentsFile(file, "0")).thenReturn(List.of(testDomainPayment));
-        assertThrows(RuntimeException.class, () ->  paymentsService.uploadFile(file, "0"));
+        assertThrows(IllegalArgumentException.class, () ->  paymentsService.uploadFile(file, "0"));
     }
 
     @Test
@@ -202,7 +202,7 @@ class PaymentsServiceTest {
         when(contractRepository.findByContractNumber("123")).thenReturn(Optional.empty());
         when(clientRepository.findById("1")).thenReturn(Optional.of(testClient));
         when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
-        assertThrows(RuntimeException.class, () -> paymentsService.createPayment(testDomainPayment));
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(testDomainPayment));
     }
 
     @Test
@@ -210,6 +210,6 @@ class PaymentsServiceTest {
         when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
         when(clientRepository.findById("0")).thenReturn(Optional.empty());
         when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
-        assertThrows(RuntimeException.class, () -> paymentsService.createPayment(testDomainPayment));
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(testDomainPayment));
     }
 }
