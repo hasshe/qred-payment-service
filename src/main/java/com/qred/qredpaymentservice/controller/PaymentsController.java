@@ -1,21 +1,23 @@
 package com.qred.qredpaymentservice.controller;
 
-import com.qred.qredpaymentservice.controller.records.response.ListPaymentResponse;
 import com.qred.qredpaymentservice.controller.records.ApiPayment;
+import com.qred.qredpaymentservice.controller.records.response.ListPaymentResponse;
+import com.qred.qredpaymentservice.service.PaymentsService;
 import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
-import com.qred.qredpaymentservice.service.PaymentsService;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -30,7 +32,7 @@ public class PaymentsController {
     public PaymentsController(PaymentsService paymentsService) {
         this.paymentsService = paymentsService;
     }
-    // TODO: GlobalExceptionHandler
+
     // TODO: Client verification
     @Operation(summary = "Get payments by contract number")
     @ApiResponses(value = {
@@ -58,10 +60,11 @@ public class PaymentsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiPayment.fromDomain(createdPayment));
     }
 
-    @PostMapping("/file")
-    public ResponseEntity<List<String>> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping(path = "/file/{clientId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ListPaymentResponse> uploadFile(@RequestPart("file") MultipartFile file, @PathVariable String clientId) throws IOException {
         logger.info("Upload Payment Request");
-        var createdPayments = paymentsService.uploadFile(file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdPayments);
+        var createdPayments = paymentsService.uploadFile(file, clientId).stream().map(ApiPayment::fromDomain).toList();
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ListPaymentResponse(createdPayments));
     }
 }

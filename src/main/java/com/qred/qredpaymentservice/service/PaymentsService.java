@@ -12,22 +12,25 @@ import com.qred.qredpaymentservice.repository.ContractRepository;
 import com.qred.qredpaymentservice.repository.PaymentRepository;
 import com.qred.qredpaymentservice.repository.entities.Payment;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
 public class PaymentsService {
 
-    private static Logger logger = LoggerFactory.getLogger(PaymentsService.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(PaymentsService.class.getName());
 
     private final ClientRepository clientRepository;
     private final PaymentRepository paymentRepository;
     private final ContractRepository contractRepository;
+    private final PaymentsFileService paymentsFileService;
 
     @Autowired
-    public PaymentsService(ClientRepository clientRepository, PaymentRepository paymentRepository, ContractRepository contractRepository) {
+    public PaymentsService(ClientRepository clientRepository, PaymentRepository paymentRepository, ContractRepository contractRepository, PaymentsFileService paymentsFileService) {
         this.clientRepository = clientRepository;
         this.paymentRepository = paymentRepository;
         this.contractRepository = contractRepository;
+        this.paymentsFileService = paymentsFileService;
     }
 
     public List<DomainPayment> getPaymentsByContractNumber(String contractNumber) {
@@ -56,7 +59,8 @@ public class PaymentsService {
     }
 
     @Transactional
-    public List<String> uploadFile(MultipartFile file) {
-        return null;
+    public List<DomainPayment> uploadFile(MultipartFile file, String clientId) throws IOException {
+        //TODO: validate clientId
+        return paymentsFileService.processPaymentsFile(file, clientId);
     }
 }

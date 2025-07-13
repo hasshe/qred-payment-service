@@ -5,5 +5,5 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
-public record ListPaymentResponse(@Valid List<ApiPayment> apiPaymentRespons) {
+public record ListPaymentResponse(@Valid List<ApiPayment> apiPaymentResponses) {
 }
