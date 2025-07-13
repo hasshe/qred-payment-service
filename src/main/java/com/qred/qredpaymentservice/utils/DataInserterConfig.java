@@ -26,6 +26,13 @@ public class DataInserterConfig {
             newContract1.setPayments(List.of());
             newContract1.setClient(savedClient);
             contractRepository.save(newContract1);
+
+            var newContract2 = new Contract();
+            newContract2.setContractNumber("54321");
+            newContract2.setStatus("ACTIVE");
+            newContract2.setPayments(List.of());
+            newContract2.setClient(savedClient);
+            contractRepository.save(newContract2);
         };
     }
 

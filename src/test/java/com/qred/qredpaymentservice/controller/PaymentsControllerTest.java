@@ -100,7 +100,7 @@ class PaymentsControllerTest {
     }
 
     @Test
-    void uploadFile() throws Exception {
+    void uploadCsvFile() throws Exception {
         String csvContent = "payment_date,amount,type,contract_number\n2024-01-30,1000,incoming,12345";
         MockMultipartFile file = new MockMultipartFile(
                 "file",
@@ -125,4 +125,63 @@ class PaymentsControllerTest {
                 .andExpect(jsonPath("$.apiPaymentResponses[0].amount").value("1000"))
                 .andExpect(jsonPath("$.apiPaymentResponses[0].clientId").value("1"));
     }
+
+    @Test
+    void uploadXmlFile() throws Exception {
+        String xmlContent = """
+            <payments>
+                <payment>
+                    <payment_date>2024-01-30</payment_date>
+                    <amount>1000.00</amount>
+                    <type>incoming</type>
+                    <contract_number>12345</contract_number>
+                </payment>
+                <payment>
+                    <payment_date>2024-01-31</payment_date>
+                    <amount>500.00</amount>
+                    <type>outgoing</type>
+                    <contract_number>54321</contract_number>
+                </payment>
+            </payments>
+            """;
+
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "test-document.xml",
+                "application/xml",
+                xmlContent.getBytes()
+        );
+
+        var domainPayment1 = new DomainPayment(
+                LocalDate.parse("2024-01-30"),
+                new BigDecimal("1000"),
+                PaymentType.INCOMING,
+                "12345",
+                "1"
+        );
+
+        var domainPayment2 = new DomainPayment(
+                LocalDate.parse("2024-01-31"),
+                new BigDecimal("500"),
+                PaymentType.OUTGOING,
+                "54321",
+                "1"
+        );
+
+        when(paymentsService.uploadFile(file, "1")).thenReturn(List.of(domainPayment1, domainPayment2));
+
+        mockMvc.perform(multipart("/api/payments/file/1")
+                        .file(file)
+                        .contentType(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.apiPaymentResponses[0].contractNumber").value("12345"))
+                .andExpect(jsonPath("$.apiPaymentResponses[0].paymentDate").value("2024-01-30"))
+                .andExpect(jsonPath("$.apiPaymentResponses[0].amount").value("1000"))
+                .andExpect(jsonPath("$.apiPaymentResponses[0].clientId").value("1"))
+                .andExpect(jsonPath("$.apiPaymentResponses[1].contractNumber").value("54321"))
+                .andExpect(jsonPath("$.apiPaymentResponses[1].paymentDate").value("2024-01-31"))
+                .andExpect(jsonPath("$.apiPaymentResponses[1].amount").value("500"))
+                .andExpect(jsonPath("$.apiPaymentResponses[1].clientId").value("1"));
+    }
+
 }

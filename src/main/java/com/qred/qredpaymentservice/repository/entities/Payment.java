@@ -101,4 +101,8 @@ public class Payment {
     public void setContract(Contract contract) {
         this.contract = contract;
     }
+
+    public void setPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = paymentDate;
+    }
 }

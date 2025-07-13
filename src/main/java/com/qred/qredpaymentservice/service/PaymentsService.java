@@ -73,7 +73,9 @@ public class PaymentsService {
         newPayment.setClient(existingClient);
         newPayment.setContract(existingContract);
         newPayment.setType(domainPayment.paymentType().name());
-        return DomainPayment.toDomain(paymentRepository.save(newPayment));
+        newPayment.setPaymentDate(domainPayment.paymentDate());
+        var savedPayment = paymentRepository.saveAndFlush(newPayment);
+        return DomainPayment.toDomain(savedPayment);
     }
 
     private Client verifyClient(String clientId) {
@@ -85,7 +87,7 @@ public class PaymentsService {
     }
 
     private Contract verifyContract(String contractNumber) {
-        var contract = contractRepository.findById(contractNumber);
+        var contract = contractRepository.findByContractNumber(contractNumber);
         if (contract.isEmpty()) {
             throw new RuntimeException("Contract not found");
         }
