@@ -6,6 +6,7 @@ import com.qred.qredpaymentservice.repository.PaymentRepository;
 import com.qred.qredpaymentservice.repository.entities.Client;
 import com.qred.qredpaymentservice.repository.entities.Contract;
 import com.qred.qredpaymentservice.repository.entities.Payment;
+import com.qred.qredpaymentservice.service.domain.ContractStatus;
 import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -86,6 +88,13 @@ public class PaymentsService {
         var contract = contractRepository.findByContractNumber(contractNumber);
         if (contract.isEmpty()) {
             throw new IllegalArgumentException("Contract not found");
+        }
+        if (ContractStatus.fromString(contract.get().getStatus()) != ContractStatus.ACTIVE) {
+            throw new IllegalArgumentException("Contract status not active");
+        }
+        var today = LocalDate.now();
+        if (today.isBefore(contract.get().getStartDate()) || today.isAfter(contract.get().getEndDate())) {
+            throw new IllegalArgumentException("Contract hasn't started yet or has expired");
         }
         return contract.get();
     }

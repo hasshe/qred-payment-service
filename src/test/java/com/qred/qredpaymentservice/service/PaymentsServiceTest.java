@@ -6,6 +6,7 @@ import com.qred.qredpaymentservice.repository.PaymentRepository;
 import com.qred.qredpaymentservice.repository.entities.Client;
 import com.qred.qredpaymentservice.repository.entities.Contract;
 import com.qred.qredpaymentservice.repository.entities.Payment;
+import com.qred.qredpaymentservice.service.domain.ContractStatus;
 import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import com.qred.qredpaymentservice.service.domain.PaymentType;
 import jakarta.xml.bind.JAXBException;
@@ -63,6 +64,8 @@ class PaymentsServiceTest {
         testContract.setContractNumber("123");
         testContract.setStatus("ACTIVE");
         testContract.setClient(testClient);
+        testContract.setStartDate(LocalDate.now().minusYears(1));
+        testContract.setEndDate(LocalDate.now().plusYears(1));
 
         testDomainPayment = new DomainPayment(
                 LocalDate.parse("2025-01-01"),
@@ -209,6 +212,33 @@ class PaymentsServiceTest {
     void shouldFailCreateSinglePaymentIfInvalidClient() {
         when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
         when(clientRepository.findById("0")).thenReturn(Optional.empty());
+        when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(testDomainPayment));
+    }
+
+    @Test
+    void shouldFailCreateSinglePaymentIfContractExpired() {
+        testContract.setEndDate(LocalDate.now().minusDays(1));
+        when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
+        when(clientRepository.findById("1")).thenReturn(Optional.of(testClient));
+        when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(testDomainPayment));
+    }
+
+    @Test
+    void shouldFailCreateSinglePaymentIfContractHasNotStarted() {
+        testContract.setStartDate(LocalDate.now().plusYears(1));
+        when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
+        when(clientRepository.findById("1")).thenReturn(Optional.of(testClient));
+        when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(testDomainPayment));
+    }
+
+    @Test
+    void shouldFailCreateSinglePaymentIfContractIsInactiveStatus() {
+        testContract.setStatus(ContractStatus.INACTIVE.name());
+        when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
+        when(clientRepository.findById("1")).thenReturn(Optional.of(testClient));
         when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
         assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(testDomainPayment));
     }

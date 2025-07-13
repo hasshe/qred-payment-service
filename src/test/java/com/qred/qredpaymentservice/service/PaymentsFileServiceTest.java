@@ -61,7 +61,7 @@ class PaymentsFileServiceTest {
     }
 
     @Test
-    void shouldThrowIfInvalidTypeOfFile() throws JAXBException, IOException {
+    void shouldThrowIfInvalidTypeOfFile() {
         String content = "some random content";
         MockMultipartFile file = new MockMultipartFile(
                 "file",
