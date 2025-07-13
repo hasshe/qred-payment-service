@@ -1,8 +1,8 @@
 package com.qred.qredpaymentservice.repository;
 
+import com.qred.qredpaymentservice.repository.entities.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.qred.qredpaymentservice.repository.entities.Payment;
 
 import java.util.List;
 

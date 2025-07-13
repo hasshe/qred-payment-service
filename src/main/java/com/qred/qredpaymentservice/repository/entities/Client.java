@@ -1,6 +1,12 @@
 package com.qred.qredpaymentservice.repository.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -27,9 +33,10 @@ public class Client {
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Payment> payments;
 
-    public Client() {}
+    public Client() {
+    }
 
-    public Client(String name, String email, String address,  List<Payment> payments) {
+    public Client(String name, String email, String address, List<Payment> payments) {
         this.name = name;
         this.email = email;
         this.address = address;

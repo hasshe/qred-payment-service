@@ -7,7 +7,8 @@ import com.qred.qredpaymentservice.utils.xml_processor.records.XmlPayment;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record DomainPayment(LocalDate paymentDate, BigDecimal amount, PaymentType paymentType, String contractNumber, String clientId) {
+public record DomainPayment(LocalDate paymentDate, BigDecimal amount, PaymentType paymentType, String contractNumber,
+                            String clientId) {
     public static DomainPayment toDomain(Payment payment) {
         return new DomainPayment(
                 payment.getPaymentDate(),

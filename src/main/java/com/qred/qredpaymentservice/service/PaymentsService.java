@@ -1,5 +1,9 @@
 package com.qred.qredpaymentservice.service;
 
+import com.qred.qredpaymentservice.repository.ClientRepository;
+import com.qred.qredpaymentservice.repository.ContractRepository;
+import com.qred.qredpaymentservice.repository.PaymentRepository;
+import com.qred.qredpaymentservice.repository.entities.Payment;
 import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import jakarta.transaction.Transactional;
 import jakarta.xml.bind.JAXBException;
@@ -8,10 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import com.qred.qredpaymentservice.repository.ClientRepository;
-import com.qred.qredpaymentservice.repository.ContractRepository;
-import com.qred.qredpaymentservice.repository.PaymentRepository;
-import com.qred.qredpaymentservice.repository.entities.Payment;
 
 import java.io.IOException;
 import java.util.List;

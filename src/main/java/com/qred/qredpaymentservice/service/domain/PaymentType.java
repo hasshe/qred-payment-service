@@ -8,7 +8,7 @@ public enum PaymentType {
 
     public static PaymentType fromString(String paymentType) {
         return switch (paymentType.toUpperCase()) {
-            case "INCOMING"-> INCOMING;
+            case "INCOMING" -> INCOMING;
             case "OUTGOING" -> OUTGOING;
             default -> throw new PaymentTypeException("Invalid PaymentType: " + paymentType);
         };

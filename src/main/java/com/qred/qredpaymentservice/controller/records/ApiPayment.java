@@ -9,13 +9,13 @@ import java.time.LocalDate;
 
 public record ApiPayment(@NotNull LocalDate paymentDate, @NotNull BigDecimal amount, @NotBlank String paymentType, @NotBlank String contractNumber, @NotBlank String clientId) {
 
-    public static ApiPayment fromDomain(DomainPayment payment) {
+    public static ApiPayment fromDomain(DomainPayment domainPayment) {
         return new ApiPayment(
-                payment.paymentDate(),
-                payment.amount(),
-                payment.paymentType().toString(),
-                payment.contractNumber(),
-                payment.clientId()
+                domainPayment.paymentDate(),
+                domainPayment.amount(),
+                domainPayment.paymentType().toString(),
+                domainPayment.contractNumber(),
+                domainPayment.clientId()
         );
     }
 }

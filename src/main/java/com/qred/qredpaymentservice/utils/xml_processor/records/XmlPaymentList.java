@@ -10,7 +10,8 @@ public class XmlPaymentList {
 
     private List<XmlPayment> payments;
 
-    public XmlPaymentList() {}
+    public XmlPaymentList() {
+    }
 
     public XmlPaymentList(List<XmlPayment> payments) {
         this.payments = payments;
