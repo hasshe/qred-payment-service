@@ -7,6 +7,7 @@ import com.qred.qredpaymentservice.service.domain.DomainPayment;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.xml.bind.JAXBException;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/payments")
+@Tag(name = "Payments Controller", description = "APIs for creating and fetching payments related to contracts and clients")
 public class PaymentsController {
 
     private static final Logger logger = LoggerFactory.getLogger(PaymentsController.class);
@@ -52,6 +54,11 @@ public class PaymentsController {
         return ResponseEntity.ok().body(new ListPaymentResponse(responsePayments));
     }
 
+    @Operation(summary = "Get payments by Client ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved payments"),
+            @ApiResponse(responseCode = "404", description = "Payments not found")
+    })
     @GetMapping("/client/{clientId}")
     public ResponseEntity<ListPaymentResponse> getPaymentsByClientId(@PathVariable String clientId) {
         var payments = paymentsService.getPaymentsByClientId(clientId);
@@ -59,6 +66,7 @@ public class PaymentsController {
         return ResponseEntity.ok().body(new ListPaymentResponse(responsePayments));
     }
 
+    @Operation(summary = "Create single payment for a contract")
     @PostMapping
     public ResponseEntity<ApiPayment> createPayment(@Valid @RequestBody ApiPayment requestPayment) {
         logger.info("Create Payment Request");
@@ -66,6 +74,7 @@ public class PaymentsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiPayment.fromDomain(createdPayment));
     }
 
+    @Operation(summary = "Create multiple payments for contracts via CSV or XML files.")
     @PostMapping(path = "/file/{clientId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ListPaymentResponse> uploadFile(@RequestPart("file") MultipartFile file, @PathVariable String clientId) throws IOException, JAXBException {
