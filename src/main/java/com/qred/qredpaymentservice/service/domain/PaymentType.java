@@ -1,7 +1,5 @@
 package com.qred.qredpaymentservice.service.domain;
 
-import com.qred.qredpaymentservice.exceptions.PaymentTypeException;
-
 public enum PaymentType {
     INCOMING,
     OUTGOING;
@@ -10,7 +8,7 @@ public enum PaymentType {
         return switch (paymentType.toUpperCase()) {
             case "INCOMING" -> INCOMING;
             case "OUTGOING" -> OUTGOING;
-            default -> throw new PaymentTypeException("Invalid PaymentType: " + paymentType);
+            default -> throw new IllegalArgumentException("Invalid PaymentType: " + paymentType);
         };
     }
 }

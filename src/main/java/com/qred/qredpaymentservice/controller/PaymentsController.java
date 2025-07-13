@@ -41,7 +41,6 @@ public class PaymentsController {
         this.paymentsService = paymentsService;
     }
 
-    // TODO: Client verification
     @Operation(summary = "Get payments by contract number")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved payments"),
@@ -77,7 +76,7 @@ public class PaymentsController {
     @Operation(summary = "Create multiple payments for contracts via CSV or XML files.")
     @PostMapping(path = "/file/{clientId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ListPaymentResponse> uploadFile(@RequestPart("file") MultipartFile file, @PathVariable String clientId) throws IOException, JAXBException {
+    public ResponseEntity<ListPaymentResponse> uploadFile(@RequestPart("file") MultipartFile file, @PathVariable String clientId) {
         logger.info("Upload Payment Request");
         var createdPayments = paymentsService.uploadFile(file, clientId).stream().map(ApiPayment::fromDomain).toList();
         return ResponseEntity.status(HttpStatus.CREATED).body(new ListPaymentResponse(createdPayments));
