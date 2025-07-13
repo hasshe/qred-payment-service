@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -67,6 +68,15 @@ public class PaymentsService {
         var newPayment = new Payment();
         var existingClient = verifyClient(domainPayment.clientId());
         var existingContract = verifyContract(domainPayment.contractNumber());
+
+        if (!existingClient.getId().equals(existingContract.getClient().getId())) {
+            throw new IllegalArgumentException(String.format("Contract does not belong to the client. Client: %s, Contract Number: %s",
+                    domainPayment.clientId(), existingContract.getContractNumber()));
+        }
+        if (domainPayment.amount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException(String.format("Amount cannot be negative or zero: %s", domainPayment.amount()));
+        }
+
         newPayment.setAmount(domainPayment.amount());
         newPayment.setClient(existingClient);
         newPayment.setContract(existingContract);

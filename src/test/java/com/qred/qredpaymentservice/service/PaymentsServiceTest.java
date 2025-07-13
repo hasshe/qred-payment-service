@@ -136,15 +136,15 @@ class PaymentsServiceTest {
     @Test
     void shouldUploadPaymentsFromXml() throws JAXBException, IOException {
         String xmlContent = """
-            <payments>
-                <payment>
-                    <payment_date>2024-01-30</payment_date>
-                    <amount>1000.00</amount>
-                    <type>incoming</type>
-                    <contract_number>12345</contract_number>
-                </payment>
-            </payments>
-            """;
+                <payments>
+                    <payment>
+                        <payment_date>2024-01-30</payment_date>
+                        <amount>1000.00</amount>
+                        <type>incoming</type>
+                        <contract_number>12345</contract_number>
+                    </payment>
+                </payments>
+                """;
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",
@@ -172,21 +172,21 @@ class PaymentsServiceTest {
         when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
         when(clientRepository.findById("0")).thenReturn(Optional.empty());
         when(paymentsFileService.processPaymentsFile(file, "0")).thenReturn(List.of(testDomainPayment));
-        assertThrows(IllegalArgumentException.class, () ->  paymentsService.uploadFile(file, "0"));
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.uploadFile(file, "0"));
     }
 
     @Test
     void shouldFailUploadPaymentsFromXmlIfInvalidClient() throws JAXBException, IOException {
         String xmlContent = """
-            <payments>
-                <payment>
-                    <payment_date>2024-01-30</payment_date>
-                    <amount>1000.00</amount>
-                    <type>incoming</type>
-                    <contract_number>12345</contract_number>
-                </payment>
-            </payments>
-            """;
+                <payments>
+                    <payment>
+                        <payment_date>2024-01-30</payment_date>
+                        <amount>1000.00</amount>
+                        <type>incoming</type>
+                        <contract_number>12345</contract_number>
+                    </payment>
+                </payments>
+                """;
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",
@@ -197,7 +197,7 @@ class PaymentsServiceTest {
         when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
         when(clientRepository.findById("0")).thenReturn(Optional.empty());
         when(paymentsFileService.processPaymentsFile(file, "0")).thenReturn(List.of(testDomainPayment));
-        assertThrows(IllegalArgumentException.class, () ->  paymentsService.uploadFile(file, "0"));
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.uploadFile(file, "0"));
     }
 
     @Test
@@ -239,6 +239,49 @@ class PaymentsServiceTest {
         testContract.setStatus(ContractStatus.INACTIVE.name());
         when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
         when(clientRepository.findById("1")).thenReturn(Optional.of(testClient));
+        when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(testDomainPayment));
+    }
+
+    @Test
+    void shouldCreateSinglePaymentWithOutgoingPaymentStatus() {
+        testPayment.setType("OUTGOING");
+        var modifiedPayment = testDomainPayment.withPaymentType(PaymentType.OUTGOING);
+        when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
+        when(clientRepository.findById("1")).thenReturn(Optional.of(testClient));
+        when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
+        var result = paymentsService.createPayment(modifiedPayment);
+        assertThat(result).isEqualTo(modifiedPayment);
+    }
+
+    @Test
+    void shouldFailCreatingPaymentIfAmountIsNegative() {
+        var modifiedPayment = testDomainPayment.withAmount(BigDecimal.valueOf(-100));
+        when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
+        when(clientRepository.findById("1")).thenReturn(Optional.of(testClient));
+        when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(modifiedPayment));
+    }
+
+    @Test
+    void shouldFailCreatingPaymentIfAmountIsZero() {
+        var modifiedPayment = testDomainPayment.withAmount(BigDecimal.valueOf(0));
+        when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
+        when(clientRepository.findById("1")).thenReturn(Optional.of(testClient));
+        when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
+        assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(modifiedPayment));
+    }
+
+    @Test
+    void shouldFailCreatingPaymentIfContractDoesNotBelongToClient() {
+        var newClient = new Client();
+        newClient.setId("2");
+        newClient.setName("Client2");
+        newClient.setEmail("email2@email.com");
+        newClient.setAddress("address2");
+        testContract.setClient(newClient);
+        when(contractRepository.findByContractNumber("123")).thenReturn(Optional.of(testContract));
+        when(clientRepository.findById("2")).thenReturn(Optional.of(newClient));
         when(paymentRepository.saveAndFlush(any(Payment.class))).thenReturn(testPayment);
         assertThrows(IllegalArgumentException.class, () -> paymentsService.createPayment(testDomainPayment));
     }

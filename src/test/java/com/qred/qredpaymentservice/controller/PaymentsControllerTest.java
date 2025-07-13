@@ -73,7 +73,7 @@ class PaymentsControllerTest {
     }
 
     @Test
-    void createPayment() throws Exception {
+    void createIncomingPayment() throws Exception {
         var currentDate = LocalDate.now();
         var domainPayment = new DomainPayment(
                 currentDate,
@@ -85,6 +85,33 @@ class PaymentsControllerTest {
                 currentDate,
                 BigDecimal.valueOf(100L),
                 "incoming",
+                "12345",
+                "1"
+        );
+        when(paymentsService.createPayment(domainPayment)).thenReturn(domainPayment);
+        mockMvc.perform(post("/api/payments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(apiPayment)))
+                .andExpect(jsonPath("$.apiPaymentResponses[0].contractNumber").value("12345"))
+                .andExpect(jsonPath("$.apiPaymentResponses[0].paymentDate").value(currentDate.toString()))
+                .andExpect(jsonPath("$.apiPaymentResponses[0].amount").value("100"))
+                .andExpect(jsonPath("$.apiPaymentResponses[0].clientId").value("1"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void createOutgoingPayment() throws Exception {
+        var currentDate = LocalDate.now();
+        var domainPayment = new DomainPayment(
+                currentDate,
+                BigDecimal.valueOf(100L),
+                PaymentType.OUTGOING,
+                "12345",
+                "1");
+        var apiPayment = new ApiPayment(
+                currentDate,
+                BigDecimal.valueOf(100L),
+                "outgoing",
                 "12345",
                 "1"
         );
@@ -129,21 +156,21 @@ class PaymentsControllerTest {
     @Test
     void uploadXmlFile() throws Exception {
         String xmlContent = """
-            <payments>
-                <payment>
-                    <payment_date>2024-01-30</payment_date>
-                    <amount>1000.00</amount>
-                    <type>incoming</type>
-                    <contract_number>12345</contract_number>
-                </payment>
-                <payment>
-                    <payment_date>2024-01-31</payment_date>
-                    <amount>500.00</amount>
-                    <type>outgoing</type>
-                    <contract_number>54321</contract_number>
-                </payment>
-            </payments>
-            """;
+                <payments>
+                    <payment>
+                        <payment_date>2024-01-30</payment_date>
+                        <amount>1000.00</amount>
+                        <type>incoming</type>
+                        <contract_number>12345</contract_number>
+                    </payment>
+                    <payment>
+                        <payment_date>2024-01-31</payment_date>
+                        <amount>500.00</amount>
+                        <type>outgoing</type>
+                        <contract_number>54321</contract_number>
+                    </payment>
+                </payments>
+                """;
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",
@@ -182,6 +209,29 @@ class PaymentsControllerTest {
                 .andExpect(jsonPath("$.apiPaymentResponses[1].paymentDate").value("2024-01-31"))
                 .andExpect(jsonPath("$.apiPaymentResponses[1].amount").value("500"))
                 .andExpect(jsonPath("$.apiPaymentResponses[1].clientId").value("1"));
+    }
+
+    @Test
+    void failCreatePaymentWithInvalidPaymentType() throws Exception {
+        var currentDate = LocalDate.now();
+        var domainPayment = new DomainPayment(
+                currentDate,
+                BigDecimal.valueOf(100L),
+                PaymentType.OUTGOING,
+                "12345",
+                "1");
+        var apiPayment = new ApiPayment(
+                currentDate,
+                BigDecimal.valueOf(100L),
+                "something went wrong",
+                "12345",
+                "1"
+        );
+        when(paymentsService.createPayment(domainPayment)).thenReturn(domainPayment);
+        mockMvc.perform(post("/api/payments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(apiPayment)))
+                .andExpect(status().isBadRequest());
     }
 
 }

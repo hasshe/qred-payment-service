@@ -38,4 +38,24 @@ public record DomainPayment(LocalDate paymentDate, BigDecimal amount, PaymentTyp
                 clientId
         );
     }
+
+    public DomainPayment withPaymentType(PaymentType paymentType) {
+        return new DomainPayment(
+                paymentDate,
+                amount,
+                paymentType,
+                contractNumber,
+                clientId
+        );
+    }
+
+    public DomainPayment withAmount(BigDecimal amount) {
+        return new DomainPayment(
+                paymentDate,
+                amount,
+                paymentType,
+                contractNumber,
+                clientId
+        );
+    }
 }

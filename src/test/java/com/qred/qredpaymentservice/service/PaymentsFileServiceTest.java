@@ -23,15 +23,15 @@ class PaymentsFileServiceTest {
     @Test
     void processPaymentsFileXml() throws JAXBException, IOException {
         String xmlContent = """
-            <payments>
-                <payment>
-                    <payment_date>2024-01-30</payment_date>
-                    <amount>1000.00</amount>
-                    <type>incoming</type>
-                    <contract_number>12345</contract_number>
-                </payment>
-            </payments>
-            """;
+                <payments>
+                    <payment>
+                        <payment_date>2024-01-30</payment_date>
+                        <amount>1000.00</amount>
+                        <type>incoming</type>
+                        <contract_number>12345</contract_number>
+                    </payment>
+                </payments>
+                """;
 
         MockMultipartFile file = new MockMultipartFile(
                 "file",
